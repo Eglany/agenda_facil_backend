@@ -9,6 +9,7 @@ router
   .post('/login', loginValidate, CompanyController.login)
   .post('/register', registerValidate, CompanyController.register)
   .get('/my-services', AuthValidator, CompanyController.getServices)
-  .post('/my-services', AuthValidator, servicesValidate, CompanyController.createService);
+  .post('/my-services', AuthValidator, servicesValidate, CompanyController.createService)
+  .get('/schedules', AuthValidator, CompanyController.getSchedules);
 
 module.exports = router;

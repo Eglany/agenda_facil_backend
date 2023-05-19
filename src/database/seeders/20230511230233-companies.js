@@ -21,7 +21,7 @@ module.exports = {
         id: 3,
         name: 'Clinica Terapeutica',
         email: 'terapia@mail.com',
-        password: '5382177840afc7b3810578ffb3d20d6e', // password md5('Terapia@123');
+        password: '1486d759396e6e027e987a9d3eb0aeff', // password md5('Terapia@123');
         phoneNumber: '92 9 0000-0000',
       },
       {

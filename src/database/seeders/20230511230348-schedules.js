@@ -32,6 +32,13 @@ module.exports = {
         companyId: 1,
       },
       {
+        date: '2023-05-26',
+        hour: '15:0:00',
+        userId: 3,
+        serviceId: 5,
+        companyId: 2,
+      },
+      {
         date: '2023-05-27',
         hour: '09:30:00',
         userId: 4,

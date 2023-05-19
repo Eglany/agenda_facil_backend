@@ -12,6 +12,6 @@ router
   .post('/my-companies/:id', AuthValidator, UserController.favoriteCompany)
   .get('/schedules', AuthValidator, UserController.getSchedules)
   .post('/schedules', AuthValidator, scheduleValidate, UserController.createSchudele)
-  .post('/teste', UserController.testeroute);
+  .post('/teste', AuthValidator, UserController.availableSchedules);
 
 module.exports = router;

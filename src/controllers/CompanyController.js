@@ -31,6 +31,14 @@ const createService = async (request, response) => {
   return response.status(status).json({ status, data });
 };
 
+const getSchedules = async (request, response) => {
+  const { id } = request.data;
+
+  const { status, data } = await CompanyService.getAllCompanySchedules(id);
+
+  return response.status(status).json(data);
+};
+
 module.exports = {
-  register, login, getServices, createService,
+  register, login, getServices, createService, getSchedules,
 };

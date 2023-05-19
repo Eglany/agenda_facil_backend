@@ -53,14 +53,18 @@ const createSchudele = async (request, response) => {
   return response.status(status).json({ status, data });
 };
 
-const testeroute = async (_request, response) => {
-  // const { id: userId } = request.data;
+const availableSchedules = async (_request, response) => {
+  const { status, data } = await UserService.getAvailableScheduleByCompanyAndDate(2, 5, '2023-05-25');
 
-  const idk = await UserService.getAvailableScheduleByCompanyAndDate(1, 1, '2023-05-29');
-
-  return response.status(200).json(idk);
+  return response.status(status).json({ status, data });
 };
 
 module.exports = {
-  register, login, getUserCompanies, favoriteCompany, getSchedules, createSchudele, testeroute,
+  register,
+  login,
+  getUserCompanies,
+  favoriteCompany,
+  getSchedules,
+  createSchudele,
+  availableSchedules,
 };
