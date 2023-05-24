@@ -46,15 +46,30 @@ const getSchedules = async (request, response) => {
 
 const createSchudele = async (request, response) => {
   const { id: userId } = request.data;
-  const { serviceId, date, hour } = request.body;
+  const {
+    companyId, serviceId, date, hour,
+  } = request.body;
 
-  const { status, data } = await UserService.createScheduleByUser(userId, serviceId, date, hour);
+  const { status, data } = await UserService
+    .createScheduleByUser(userId, companyId, serviceId, date, hour);
 
   return response.status(status).json({ status, data });
 };
 
-const availableSchedules = async (_request, response) => {
-  const { status, data } = await UserService.getAvailableScheduleByCompanyAndDate(2, 5, '2023-05-25');
+const availableSchedules = async (request, response) => {
+  const { companyId, serviceId, date } = request.body;
+
+  const { status, data } = await UserService
+    .getAvailableScheduleByCompanyAndDate(companyId, serviceId, date);
+
+  return response.status(status).json({ status, data });
+};
+
+const allCompanyServices = async (request, response) => {
+  // const { id: userId } = request.data;
+  const { id: companyId } = request.params;
+
+  const { status, data } = await UserService.getAllCompanyServices(companyId);
 
   return response.status(status).json({ status, data });
 };
@@ -67,4 +82,5 @@ module.exports = {
   getSchedules,
   createSchudele,
   availableSchedules,
+  allCompanyServices,
 };

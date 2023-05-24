@@ -19,7 +19,8 @@ const loginSchema = Joi.object({
 
 const scheduleSchema = Joi.object({
   serviceId: Joi.number().positive().greater(0).required(),
-  date: Joi.date().format('YYYY/MM/DD').required(),
+  companyId: Joi.number().positive().greater(0).required(),
+  date: Joi.date().format('YYYY-MM-DD').required(),
   hour: Joi.date().format('HH:mm:ss').required(),
 });
 

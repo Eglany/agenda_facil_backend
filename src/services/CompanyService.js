@@ -6,7 +6,7 @@ const { createJWT } = require('../Auth');
 
 const login = async (email, password) => {
   const company = await Company.findOne({ where: { email } });
-  console.log(company);
+
   const checkPassword = md5(password);
 
   const error = {
@@ -18,7 +18,7 @@ const login = async (email, password) => {
 
   const token = createJWT(company);
 
-  return { status: 200, data: { token } };
+  return { status: 200, data: { name: company.name, token } };
 };
 
 const getAllCompanyServices = async (companyId) => {

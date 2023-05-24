@@ -36,7 +36,7 @@ const getSchedules = async (request, response) => {
 
   const { status, data } = await CompanyService.getAllCompanySchedules(id);
 
-  return response.status(status).json(data);
+  return response.status(status).json({ status, data });
 };
 
 module.exports = {

@@ -17,7 +17,7 @@ const login = async (email, password) => {
 
   const token = createJWT(user);
 
-  return { status: 200, data: { token } };
+  return { status: 200, data: { name: user.fullName, token } };
 };
 
 const getCompanyById = async (id) => {
@@ -109,9 +109,9 @@ const getAllUserSchedules = async (userId) => {
   return { status: 200, data };
 };
 
-const createScheduleByUser = async (userId, serviceId, date, hour) => {
+const createScheduleByUser = async (userId, companyId, serviceId, date, hour) => {
   const { id } = await Schedule.create({
-    date, hour, userId, serviceId,
+    date, hour, userId, serviceId, companyId,
   });
 
   const data = {
@@ -205,6 +205,15 @@ const getAvailableScheduleByCompanyAndDate = async (companyId, serviceId, reques
   return { status: 200, data: createAvailablesSchedules };
 };
 
+const getAllCompanyServices = async (companyId) => {
+  const services = await Service.findAll({
+    where: { companyId },
+    attributes: { exclude: ['companyId'] },
+  });
+
+  return { status: 200, data: services };
+};
+
 module.exports = {
   login,
   getAllCompanyByUserId,
@@ -212,6 +221,5 @@ module.exports = {
   getAllUserSchedules,
   createScheduleByUser,
   getAvailableScheduleByCompanyAndDate,
+  getAllCompanyServices,
 };
-
-// return (Math.ceil(averageTimeInMillSeecond / I_30MIN_IN_MILLISECONDS)) * I_30MIN_IN_MILLISECONDS;
