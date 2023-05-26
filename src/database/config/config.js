@@ -16,10 +16,11 @@ require('dotenv').config();
 
 const config = {
   development: {
-    database: process.env.DB_NAME,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    host: process.env.DB_HOST,
+    database: process.env.DB_NAME || 'agenda_facil',
+    username: process.env.DB_USER || 'root',
+    password: process.env.DB_PASS || '',
+    port: Number(process.env.DB_PORT) || 3306,
+    host: process.env.DB_HOST || 'localhost',
     dialect: 'mysql',
     dialectOptions: {
       timezone: 'Z',
@@ -37,6 +38,6 @@ const config = {
     },
     logging: false,
   },
-}
+};
 
-module.exports = config
+module.exports = config;
