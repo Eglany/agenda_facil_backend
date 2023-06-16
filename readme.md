@@ -4,7 +4,7 @@ Bem-vindo ao projeto de backend do Agenda Fácil! Este sistema foi desenvolvido 
 
 O backend é responsável pelo processamento dos dados e pela lógica de negócios do sistema. Foi construído utilizando Node.js e várias bibliotecas populares, incluindo Express, Joi Validator, JWT, Sequelize, MySQL e Jest.
 
-Para mais informações sobre o projeto, você pode visitar o [site oficial](https://inovatec.junowoz.com/projetos/Agenda%20F%C3%A1cil.) da feira de tecnologia, onde o projeto está documentado.
+Para mais informações sobre o projeto, você pode visitar o [site oficial](https://inovatec.junowoz.com/projetos/Agenda%20F%C3%A1cil) da feira de tecnologia, onde o projeto está documentado.
 
 
 ## Recursos e Funcionalidades
