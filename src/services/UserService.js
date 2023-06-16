@@ -1,6 +1,12 @@
 const md5 = require('md5');
 const {
-  User, Company, UserCompany, CompanyAddress, Schedule, Service, BusinessHour,
+  User,
+  Company,
+  UserCompany,
+  CompanyAddress,
+  Schedule,
+  Service,
+  BusinessHour,
 } = require('../database/models');
 const { createJWT } = require('../Auth');
 
@@ -89,29 +95,45 @@ const getAllUserSchedules = async (userId) => {
     order: [['date', 'ASC']],
   });
 
-  const data = schedules.map(({
-    id, date, hour, service: {
-      name, price, averageTime, description, company,
-    },
-  }) => ({
-    id,
-    date: date.replaceAll('-', '/'),
-    hour,
-    company: {
-      id: company.id,
-      name: company.name,
-    },
-    service: {
-      name, price, averageTime, description,
-    },
-  }));
+  const data = schedules.map(
+    ({
+      id,
+      date,
+      hour,
+      service: { name, price, averageTime, description, company },
+    }) => ({
+      id,
+      date: date.replaceAll('-', '/'),
+      hour,
+      company: {
+        id: company.id,
+        name: company.name,
+      },
+      service: {
+        name,
+        price,
+        averageTime,
+        description,
+      },
+    })
+  );
 
   return { status: 200, data };
 };
 
-const createScheduleByUser = async (userId, companyId, serviceId, date, hour) => {
+const createScheduleByUser = async (
+  userId,
+  companyId,
+  serviceId,
+  date,
+  hour
+) => {
   const { id } = await Schedule.create({
-    date, hour, userId, serviceId, companyId,
+    date,
+    hour,
+    userId,
+    serviceId,
+    companyId,
   });
 
   const data = {
@@ -122,41 +144,73 @@ const createScheduleByUser = async (userId, companyId, serviceId, date, hour) =>
   return { status: 201, data };
 };
 
-const createListBlockTimesByBusinessHour = ({ openTime, closeTime }, requestedDate) => {
+const createListBlockTimesByBusinessHour = (
+  { openTime, closeTime },
+  requestedDate
+) => {
   const TI_30MIN_IN_MILLISECONDS = 1800000;
 
-  const openTimeInMilliseconds = (new Date(`${requestedDate} ${openTime}.000Z`)).getTime();
-  const closeTimeInMilliseconds = (new Date(`${requestedDate} ${closeTime}.000Z`)).getTime();
+  const openTimeInMilliseconds = new Date(
+    `${requestedDate} ${openTime}.000Z`
+  ).getTime();
+  const closeTimeInMilliseconds = new Date(
+    `${requestedDate} ${closeTime}.000Z`
+  ).getTime();
 
-  const BusinessHoursInMilliseconds = closeTimeInMilliseconds - openTimeInMilliseconds;
+  const BusinessHoursInMilliseconds =
+    closeTimeInMilliseconds - openTimeInMilliseconds;
 
-  const amountBlockTimes = BusinessHoursInMilliseconds / TI_30MIN_IN_MILLISECONDS;
+  const amountBlockTimes =
+    BusinessHoursInMilliseconds / TI_30MIN_IN_MILLISECONDS;
 
   const listBlockTimes = [];
   let blockTime = openTimeInMilliseconds;
   for (let index = 1; index <= amountBlockTimes; index += 1) {
-    listBlockTimes.push({ itsSchedule: false, scheduleTime: new Date(blockTime) });
+    listBlockTimes.push({
+      itsSchedule: false,
+      scheduleTime: new Date(blockTime),
+    });
     blockTime += TI_30MIN_IN_MILLISECONDS;
   }
 
   return listBlockTimes;
 };
 
-const convertInMillSeconds = (anyHour) => (anyHour.split(':').reverse().reduce((prev, curr, i) => (prev + curr * 60 ** i), 0)) * 1000;
+const convertInMillSeconds = (anyHour) =>
+  anyHour
+    .split(':')
+    .reverse()
+    .reduce((prev, curr, i) => prev + curr * 60 ** i, 0) * 1000;
 
-const verifyCanSchedule = (schedules, scheduleToBeChecked, averageTimeToBeRequested) => {
+const verifyCanSchedule = (
+  schedules,
+  scheduleToBeChecked,
+  averageTimeToBeRequested
+) => {
   const verify = schedules.some(({ hour, date, service: { averageTime } }) => {
     const averageTimeInMilliseconds = convertInMillSeconds(averageTime);
-    const scheduleDateInMilliseconds = (new Date(`${date} ${hour}.000Z`)).getTime();
-    return scheduleToBeChecked.getTime() > (scheduleDateInMilliseconds - averageTimeToBeRequested)
-    && scheduleToBeChecked.getTime() < (scheduleDateInMilliseconds + averageTimeInMilliseconds);
+    const scheduleDateInMilliseconds = new Date(
+      `${date} ${hour}.000Z`
+    ).getTime();
+    return (
+      scheduleToBeChecked.getTime() >
+        scheduleDateInMilliseconds - averageTimeToBeRequested &&
+      scheduleToBeChecked.getTime() <
+        scheduleDateInMilliseconds + averageTimeInMilliseconds
+    );
   });
 
   return verify;
 };
 
-const getAvailableScheduleByCompanyAndDate = async (companyId, serviceId, requestedDate) => {
-  const dayWeekOfTheRequestedDate = (new Date(`${requestedDate} 12:00:00.000Z`)).getDay();
+const getAvailableScheduleByCompanyAndDate = async (
+  companyId,
+  serviceId,
+  requestedDate
+) => {
+  const dayWeekOfTheRequestedDate = new Date(
+    `${requestedDate} 12:00:00.000Z`
+  ).getDay();
 
   const { businessHours, service, schedules } = await Company.findOne({
     where: { id: companyId },
@@ -191,14 +245,28 @@ const getAvailableScheduleByCompanyAndDate = async (companyId, serviceId, reques
     ],
   });
 
-  const listBlockTimes = createListBlockTimesByBusinessHour(businessHours[0], requestedDate);
-  const averageTimeInMilliseconds = convertInMillSeconds(service[0].averageTime);
-  const closeTimeInMilliseconds = (new Date(`${requestedDate} ${businessHours[0].closeTime}.000Z`)).getTime();
+  const listBlockTimes = createListBlockTimesByBusinessHour(
+    businessHours[0],
+    requestedDate
+  );
+  const averageTimeInMilliseconds = convertInMillSeconds(
+    service[0].averageTime
+  );
+  const closeTimeInMilliseconds = new Date(
+    `${requestedDate} ${businessHours[0].closeTime}.000Z`
+  ).getTime();
   const createAvailablesSchedules = listBlockTimes.map(({ scheduleTime }) => {
-    const ver = scheduleTime.getTime() > (closeTimeInMilliseconds - averageTimeInMilliseconds);
+    const ver =
+      scheduleTime.getTime() >
+      closeTimeInMilliseconds - averageTimeInMilliseconds;
     return {
-      itsSchedule: verifyCanSchedule(schedules, scheduleTime, averageTimeInMilliseconds) || ver,
-      scheduleTime: scheduleTime.toISOString().split('T')[1].replace('.000Z', ''),
+      itsSchedule:
+        verifyCanSchedule(schedules, scheduleTime, averageTimeInMilliseconds) ||
+        ver,
+      scheduleTime: scheduleTime
+        .toISOString()
+        .split('T')[1]
+        .replace('.000Z', ''),
     };
   });
 
