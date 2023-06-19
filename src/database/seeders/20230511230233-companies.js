@@ -12,7 +12,7 @@ module.exports = {
       },
       {
         id: 2,
-        name: 'Clinica Odontologiaca Dona Maria',
+        name: 'Clinica Odontologica Dona Maria',
         email: 'dona_maria@mail.com',
         password: '2a2c9d3a54c5bd6ea9e297cc2981dce1', // password md5('Dentista@123');
         phoneNumber: '92 9 0000-0000',
